@@ -1,0 +1,23 @@
+# Dependencies and build output
+node_modules/
+dist/
+*.tsbuildinfo
+
+# Large challenge data: never commit (several GB)
+Resources/student_resource/dataset/
+Resources/__MACOSX/
+Website/The_Epoch_Warriors_submission/output/*.tsv
+
+# Local environment
+.env.local
+.env.*.local
+
+# Screenshots and reports from local checks
+Website/app/.checks/
+
+# OS and editor files
+.DS_Store
+Thumbs.db
+
+# Handover package (built from the repo; not part of it)
+resolv-handover.zip
