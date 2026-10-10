@@ -7,7 +7,7 @@
 Business entity resolution across 1.7 million businesses and nearly 10 million records,<br>
 in English, French and Indic scripts. Built by team **The Epoch Warriors** for the **Amazon ML Challenge 2026**.
 
-![Amazon ML Challenge 2026](https://img.shields.io/badge/Amazon%20ML%20Challenge%202026-Rank%20345%20of%2032%2C000-CF4520)
+![Amazon ML Challenge 2026](https://img.shields.io/badge/Amazon%20ML%20Challenge%202026-Rank%20471%20of%2032%2C000-CF4520)
 ![Public leaderboard macro F0.5](https://img.shields.io/badge/Public%20leaderboard%20F0.5-0.985978-1D7347)
 ![Python](https://img.shields.io/badge/Python-3.12-3776AB?logo=python&logoColor=white)
 ![React and TypeScript](https://img.shields.io/badge/Website-React%20%2B%20TypeScript-1C1A16?logo=react&logoColor=white)
@@ -20,7 +20,7 @@ in English, French and Indic scripts. Built by team **The Epoch Warriors** for t
 
 | | |
 |---|---|
-| **Rank** | 345th out of 32,000 participating teams |
+| **Rank** | 471st out of 32,000 participating teams |
 | **Public leaderboard** (macro F0.5) | **0.985978** |
 | **Validation** (macro F0.5 / precision / recall) | 0.99158 / 0.99803 / 0.97776 |
 | **Test data** | 1,732,544 reference businesses and 9,969,589 records from India, the US and France |
@@ -196,11 +196,11 @@ Of the 0.00842 F0.5 still lost on validation, most is recall: true records misse
 
 France has no labels, so its accuracy can only be judged indirectly: French businesses receive 3.321 matches on average with 5.75% left empty, close to India (3.39, 5.76%) and the US (3.385, 5.82%).
 
-The [full write-up](Website/The_Epoch_Warriors_submission/Documentation_template.md) has every feature, hyperparameter, ablation and diagnostic.
+The [full write-up](code/Documentation_template.md) has every feature, hyperparameter, ablation and diagnostic.
 
 ## The website
 
-`Website/app` is a static web app that explains the solution and replays our real submission.
+`app/` is a static web app that explains the solution and replays our real submission.
 
 - **Home:** the problem, headline numbers and real examples from the data.
 - **How it works:** the three phases, all ten stages, the candidate funnel, the score history, the metric and the error analysis.
@@ -211,7 +211,7 @@ The [full write-up](Website/The_Epoch_Warriors_submission/Documentation_template
 |---|---|
 | ![The pipeline in three phases](docs/images/pipeline.png) | ![Results page with validator](docs/images/results.png) |
 
-**Demo mode.** The trained models were not saved after the challenge, so the site does not run inference. It replays our real submitted output for a stratified sample of 3,000 test businesses (1,000 per country), and every result carries a "Demo mode: precomputed results" badge. Uploaded files are parsed and checked in the browser and never sent anywhere; the site then says live inference isn't connected and offers the sample instead. The UI talks to the pipeline through a single `Resolver` interface, so a real backend can be plugged in later (see [HANDOVER.md](HANDOVER.md#demo-mode-and-the-resolver)).
+**Demo mode.** The trained models were not saved after the challenge, so the site does not run inference. It replays our real submitted output for a stratified sample of 3,000 test businesses (1,000 per country), and every result carries a "Demo mode: precomputed results" badge. Uploaded files are parsed and checked in the browser and never sent anywhere; the site then says live inference isn't connected and offers the sample instead. The UI talks to the pipeline through a single `Resolver` interface, so a real backend can be plugged in later.
 
 **Every number is checked.** Each figure on the site is stored in `src/content/` with the exact sentence it comes from in the write-up. `npm run check-facts` runs before every build and fails it if a quote is missing or doesn't match the value.
 
@@ -222,7 +222,7 @@ The [full write-up](Website/The_Epoch_Warriors_submission/Documentation_template
 Requires Node.js 22 or newer.
 
 ```bash
-cd Website/app
+cd app
 npm ci          # installs exact versions; SheetJS comes from cdn.sheetjs.com
 npm run dev     # http://localhost:5173
 ```
@@ -236,14 +236,14 @@ npm run dev     # http://localhost:5173
 | `npm run smoke` | Playwright test of every page at 360, 768 and 1440 px, plus the full sample data → results → download flow (run `preview` first) |
 | `npm run demo-data` | regenerates the sample in `public/demo/` from the full submission files (not included in this repo) |
 
-The build is a static single-page app, so it deploys to Vercel or Netlify with `Website/app` as the root directory. [HANDOVER.md](HANDOVER.md) covers deployment, Windows setup and known limits in detail.
+**Deploying.** The build is a static single-page app. On Vercel, set the Root Directory to `app` and keep "Include files outside the root directory in the Build Step" enabled, because the build reads `code/Documentation_template.md`. On Netlify, set the base directory to `app` and the publish directory to `dist`. Both routing fallbacks (`app/vercel.json`, `app/public/_redirects`) are already in place.
 
 ## Reproducing the pipeline
 
-The pipeline code is in [`Website/The_Epoch_Warriors_submission/code/business_entity_resolution`](Website/The_Epoch_Warriors_submission/code/business_entity_resolution), and its [README](Website/The_Epoch_Warriors_submission/code/business_entity_resolution/README.md) lists every command with run times.
+The notebooks in [`code/`](code) hold our pipeline, from the first version (`MLChallengeV1.ipynb`) to the final submission (`MLChallenge_v4(Final).ipynb`). `code/utils/validate_submission.py` is the challenge's official validator.
 
-- **Data:** the challenge dataset (about 2.4 GB) is not included. Point `ER_DATA_DIR` at the folder with the seven TSV files.
-- **Environment:** Python 3.12; `pip install -r requirements.txt` (PyTorch is pulled from the CUDA 12.8 index).
+- **Data:** the challenge dataset (about 2.4 GB) is not included.
+- **Environment:** Python 3.12 with polars, LightGBM, rapidfuzz, anyascii, PyTorch and Hugging Face Transformers.
 - **Hardware:** the reference run used one A100 40 GB with 30 vCPUs and 216 GB RAM. A GPU is needed for the bi-encoder, the cross-encoder and Qwen; everything else runs on the CPU.
 - Every stage caches its outputs and resumes after an interruption. Tree models and data splits are seeded (42); GPU training is not bit-exact, so a re-run matches within run-to-run noise.
 
@@ -252,21 +252,15 @@ The pipeline code is in [`Website/The_Epoch_Warriors_submission/code/business_en
 ```
 .
 ├── README.md
-├── HANDOVER.md                         website setup, deployment and maintenance notes
-├── CLAUDE.md                           project rules for Claude Code
-├── docs/images/                        screenshots used in this README
-├── Resources/student_resource/         challenge README, documentation template, official validator
-└── Website/
-    ├── The_Epoch_Warriors_submission/  the submission as handed in
-    │   ├── Documentation_template.md   full write-up: method, ablations, error analysis
-    │   └── code/business_entity_resolution/
-    │       ├── README.md               step-by-step reproduction
-    │       ├── requirements.txt
-    │       └── src/                    er_v2 pipeline modules, notebooks, validator
-    └── app/                            the Resolv website
-        ├── public/demo/                sampled demo data (generated)
-        ├── scripts/                    check-facts, build-demo-data, smoke test
-        └── src/                        pages, components, content (every fact), resolver, exports
+├── docs/images/                   screenshots used in this README
+├── code/
+│   ├── Documentation_template.md  full write-up: method, ablations, error analysis
+│   ├── MLChallenge*.ipynb         pipeline notebooks, v1 to the final submission
+│   └── utils/                     official submission validator
+└── app/                           the Resolv website
+    ├── public/demo/               sampled demo data (generated)
+    ├── scripts/                   check-facts, build-demo-data, smoke test
+    └── src/                       pages, components, content (every fact), resolver, exports
 ```
 
 ## Team

@@ -2,7 +2,7 @@ import { Children, isValidElement, useEffect, type ReactNode } from 'react';
 import Markdown, { type Components } from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { useLocation } from 'react-router';
-import documentation from '../../../The_Epoch_Warriors_submission/Documentation_template.md?raw';
+import documentation from '../../../code/Documentation_template.md?raw';
 import { PageMeta } from '../components/layout/PageMeta';
 import { headingAnchor, tableOfContents } from '../lib/docs';
 

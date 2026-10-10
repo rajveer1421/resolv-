@@ -14,6 +14,6 @@ function brandHtml(): Plugin {
 
 export default defineConfig({
   plugins: [react(), tailwindcss(), brandHtml()],
-  // The docs page imports Documentation_template.md from the sibling submission folder.
-  server: { fs: { allow: [searchForWorkspaceRoot(process.cwd()), '../The_Epoch_Warriors_submission'] } },
+  // The docs page imports Documentation_template.md from the sibling code folder.
+  server: { fs: { allow: [searchForWorkspaceRoot(process.cwd()), '../code'] } },
 });

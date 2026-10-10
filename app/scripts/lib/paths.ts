@@ -4,17 +4,16 @@ import { fileURLToPath } from 'node:url';
 const here = dirname(fileURLToPath(import.meta.url));
 
 export const APP_DIR = resolve(here, '..', '..');
-const WEBSITE_DIR = resolve(APP_DIR, '..');
-const SUBMISSION_DIR = join(WEBSITE_DIR, 'The_Epoch_Warriors_submission');
+const REPO_DIR = resolve(APP_DIR, '..');
 
 /** Source of truth for every fact on the site (read-only). */
-export const DOC_PATH = join(SUBMISSION_DIR, 'Documentation_template.md');
+export const DOC_PATH = join(REPO_DIR, 'code', 'Documentation_template.md');
 
-/** Our submitted files: ID lists only (read-only, streamed, never loaded whole). */
-const OUTPUT_DIR = process.env.ER_OUTPUT_DIR ?? join(SUBMISSION_DIR, 'output');
+/** Our submitted files: ID lists only (read-only, streamed, never loaded whole). Not in the repo. */
+const OUTPUT_DIR = process.env.ER_OUTPUT_DIR ?? join(REPO_DIR, 'output');
 
-/** The challenge inputs, which hold the names and addresses behind the IDs (read-only). */
-const DATASET_DIR = process.env.ER_DATA_DIR ?? resolve(WEBSITE_DIR, '..', 'Resources', 'student_resource', 'dataset');
+/** The challenge inputs, which hold the names and addresses behind the IDs (read-only). Not in the repo. */
+const DATASET_DIR = process.env.ER_DATA_DIR ?? join(REPO_DIR, 'dataset');
 
 export const inputs = {
   candidates: join(OUTPUT_DIR, 'candidate_pairs.tsv'),
